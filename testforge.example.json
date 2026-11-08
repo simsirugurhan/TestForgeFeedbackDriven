@@ -1,0 +1,7 @@
+{
+  "AzureOpenAI": {
+    "Endpoint": "https://<kaynak-adi>.openai.azure.com/",
+    "Deployment": "<deployment-adi, ör. gpt-4o>",
+    "ApiKey": "<buraya yazmayın; ortam değişkeni veya dotnet user-secrets kullanın>"
+  }
+}

@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TestForge Rehberi</title>
+<style>
+  :root {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0eee8; --text: #1d1c1a; --muted: #5f5c55;
+    --border: #e1ddd3; --accent: #c2410c; --accent-soft: #fbe6da; --ok: #15803d; --ok-soft: #dcf2e3;
+    --bad: #b91c1c; --bad-soft: #fbe1e1; --info: #1d4ed8; --info-soft: #e0e8fb; --code-bg: #f3f1ec;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151413; --surface: #1d1c1a; --surface-2: #252320; --text: #ece9e2; --muted: #a8a399;
+      --border: #34312c; --accent: #fb923c; --accent-soft: #3a2416; --ok: #4ade80; --ok-soft: #173222;
+      --bad: #f87171; --bad-soft: #3b1a1a; --info: #93b4ff; --info-soft: #1b2440; --code-bg: #232120;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151413; --surface: #1d1c1a; --surface-2: #252320; --text: #ece9e2; --muted: #a8a399;
+    --border: #34312c; --accent: #fb923c; --accent-soft: #3a2416; --ok: #4ade80; --ok-soft: #173222;
+    --bad: #f87171; --bad-soft: #3b1a1a; --info: #93b4ff; --info-soft: #1b2440; --code-bg: #232120;
+    --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px 64px; }
+  header.hero { padding: 48px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .eyebrow { color: var(--accent); font-weight: 600; letter-spacing: .02em; font-size: 13px; }
+  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 8px 0 12px; letter-spacing: -.02em; }
+  h2 { font-size: 24px; margin: 48px 0 12px; letter-spacing: -.01em; }
+  h3 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 12px; }
+  .lead { font-size: 18px; color: var(--muted); max-width: 720px; }
+  .loopline { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .pill { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; font-weight: 600; font-size: 14px; }
+  .pill.arrow { border: none; background: none; color: var(--muted); padding: 4px 0; }
+  nav.toc { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 14px 0; font-size: 14px; }
+  nav.toc a { color: var(--muted); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .grid { display: grid; gap: 16px; }
+  .grid.two { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .grid.three { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card h3 { margin-top: 0; }
+  ul { padding-left: 20px; margin: 0 0 12px; }
+  li { margin: 4px 0; }
+  code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 14px; }
+  code { background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; line-height: 1.5; margin: 0 0 16px; }
+  pre code { background: none; padding: 0; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); margin-bottom: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--surface-2); font-size: 13px; font-weight: 600; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+  td code { white-space: nowrap; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+  .tag.ok { background: var(--ok-soft); color: var(--ok); }
+  .tag.no { background: var(--surface-2); color: var(--muted); }
+  .tag.bad { background: var(--bad-soft); color: var(--bad); }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 0 0 16px; }
+  .callout.info { border-color: var(--info); background: var(--info-soft); }
+  .diagram { width: 100%; height: auto; display: block; }
+  .diagram text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps > li { counter-increment: step; position: relative; padding-left: 44px; margin: 0 0 18px; }
+  .steps > li::before {
+    content: counter(step); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 14px;
+  }
+  .iter { display: grid; gap: 12px; }
+  .iter-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: center; }
+  .iter-row .label { font-weight: 600; font-size: 14px; }
+  .iter-row .label small { display: block; font-weight: 400; color: var(--muted); }
+  .bar { height: 30px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
+  .bar span { display: flex; align-items: center; height: 100%; padding-left: 10px; color: #fff; font-weight: 700; font-size: 14px; background: var(--accent); border-radius: 6px; }
+  .bar span.full { background: var(--ok); }
+  .muted { color: var(--muted); }
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+  .theme-toggle { float: right; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; font: inherit; font-size: 13px; }
+  @media (max-width: 560px) {
+    .iter-row { grid-template-columns: 1fr; gap: 4px; }
+    h2 { font-size: 21px; }
+    .lead { font-size: 16px; }
+    td code { white-space: normal; word-break: break-word; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <button class="theme-toggle" type="button" id="themeToggle" aria-label="Tema değiştir">Tema</button>
+  <div class="eyebrow">Software QA Guild · Araç rehberi</div>
+  <h1>TestForge: testini yazan, çalıştıran ve düzelten ajan</h1>
+  <p class="lead">TestForge bir kaynak dosya için birim testleri üretir. Testleri gerçekten çalıştırır, derleme hatalarına, kırmızı testlere ve kapsanmayan satırlara bakar, sonra test suite'i düzeltir. Bunu testler yeşil olana ve kapsam yeterli olana kadar tekrarlar.</p>
+  <div class="loopline" aria-label="Döngü">
+    <span class="pill">Generate</span><span class="pill arrow">→</span>
+    <span class="pill">Execute</span><span class="pill arrow">→</span>
+    <span class="pill">Observe</span><span class="pill arrow">→</span>
+    <span class="pill">Improve</span><span class="pill arrow">→</span>
+    <span class="pill">Repeat</span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="İçindekiler">
+  <a href="#neden">Neden?</a><a href="#nasil">Nasıl çalışır?</a><a href="#ornek">Örnek iterasyonlar</a>
+  <a href="#araclar">Araçlar</a><a href="#kurallar">Kurallar</a><a href="#kurulum">Kurulum</a>
+  <a href="#kullanim">Kullanım</a><a href="#rapor">Rapor</a><a href="#sinirlar">Sınırlar ve v2</a>
+</nav>
+
+<section id="neden">
+  <h2>Neden yaptık?</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Sorun</h3>
+      <p>Copilot'a bir metot için test yazdırdığınızda düzgün görünen üç test gelir. Ama şunları bilemeyiz:</p>
+      <ul>
+        <li>Testler derleniyor mu, çalışırken patlıyor mu?</li>
+        <li>Önemli branch'ler test edildi mi? Coverage ne?</li>
+        <li>Model kendi çıktısının sonucunu hiç görmedi.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>TestForge'un yaklaşımı</h3>
+      <p>Üretilen test nihai sonuç değildir. Test çalıştırılır ve sonucundan öğrenilir.</p>
+      <ul>
+        <li><strong>Execution feedback:</strong> testi çalıştırınca ne oldu?</li>
+        <li><strong>Coverage feedback:</strong> kodun ne kadarını test ettik ve hangi satırlar eksik?</li>
+      </ul>
+      <p class="muted">Kaynak: Jain &amp; Le Goues, <em>TestForge: Feedback-Driven, Agentic Test Suite Generation</em> (arXiv:2503.14713).</p>
+    </div>
+  </div>
+
+  <h3>LLM ile ajan arasındaki fark</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>LLM</th><th>Ajan (TestForge)</th></tr></thead>
+      <tbody>
+        <tr><td>Cevap üretir</td><td>Aksiyon alır</td></tr>
+        <tr><td>Test kodu oluşturur</td><td>Testi oluşturur <em>ve</em> çalıştırır</td></tr>
+        <tr><td>Sonucu görmez</td><td>Sonucu ve coverage'ı gözlemler</td></tr>
+        <tr><td>Genellikle tek seferliktir</td><td>İteratif çalışır (en fazla 25 iterasyon)</td></tr>
+        <tr><td>Kullanıcı tekrar yönlendirir</td><td>Geri bildirimle kendi sürecini sürdürür</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="nasil">
+  <h2>Nasıl çalışır?</h2>
+  <p>Ajan önce kaynak kodun tamamını okuyup ilk test suite'i yazar (zero-shot). Ardından döngüye girer. Her iterasyon bir LLM çağrısı ve bu çağrının istediği araç çağrılarından oluşur.</p>
+
+  <div class="card" style="margin-bottom:16px">
+    <svg class="diagram" viewBox="0 0 860 430" role="img" aria-labelledby="loopTitle loopDesc">
+      <title id="loopTitle">TestForge geri bildirim döngüsü</title>
+      <desc id="loopDesc">Kaynak koddan zero-shot test suite üretilir, testler çalıştırılır, execution ve coverage geri bildirimi alınır, ajan eksikleri analiz edip testleri iyileştirir ve tekrar çalıştırır. Finish kabul edilince, ilerleme durunca veya 25 iterasyon dolunca döngü biter.</desc>
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/>
+        </marker>
+      </defs>
+      <!-- left column: start -->
+      <g>
+        <rect x="20" y="30" width="190" height="60" rx="10" fill="var(--surface-2)" stroke="var(--border)"/>
+        <text x="115" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Kaynak kod</text>
+        <text x="115" y="76" text-anchor="middle" font-size="12" fill="var(--muted)">DiscountService.cs</text>
+
+        <rect x="20" y="140" width="190" height="60" rx="10" fill="var(--surface-2)" stroke="var(--border)"/>
+        <text x="115" y="166" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Zero-shot suite</text>
+        <text x="115" y="186" text-anchor="middle" font-size="12" fill="var(--muted)">write_file</text>
+        <line x1="115" y1="90" x2="115" y2="136" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="210" y1="170" x2="296" y2="170" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)"/>
+      </g>
+
+      <!-- loop -->
+      <g>
+        <rect x="300" y="140" width="170" height="60" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="385" y="166" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Testleri çalıştır</text>
+        <text x="385" y="186" text-anchor="middle" font-size="12" fill="var(--muted)">run_tests</text>
+
+        <rect x="600" y="140" width="220" height="60" rx="10" fill="var(--info-soft)" stroke="var(--info)" stroke-width="1.5"/>
+        <text x="710" y="164" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Geri bildirim</text>
+        <text x="710" y="184" text-anchor="middle" font-size="12" fill="var(--muted)">hatalar + coverage + eksik satırlar</text>
+
+        <rect x="600" y="300" width="220" height="60" rx="10" fill="var(--surface-2)" stroke="var(--border)"/>
+        <text x="710" y="326" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Reflection</text>
+        <text x="710" y="346" text-anchor="middle" font-size="12" fill="var(--muted)">neyi yanlış yaptım, ne eksik?</text>
+
+        <rect x="300" y="300" width="170" height="60" rx="10" fill="var(--surface-2)" stroke="var(--border)"/>
+        <text x="385" y="326" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Testleri iyileştir</text>
+        <text x="385" y="346" text-anchor="middle" font-size="12" fill="var(--muted)">edit_file → otomatik build</text>
+
+        <line x1="470" y1="170" x2="596" y2="170" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="710" y1="200" x2="710" y2="296" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="600" y1="330" x2="474" y2="330" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="385" y1="300" x2="385" y2="204" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="395" y="258" font-size="12" fill="var(--muted)">tekrar çalıştır</text>
+      </g>
+
+      <!-- exits -->
+      <g>
+        <rect x="600" y="30" width="220" height="60" rx="10" fill="var(--ok-soft)" stroke="var(--ok)" stroke-width="1.5"/>
+        <text x="710" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">finish (doğrulanır)</text>
+        <text x="710" y="76" text-anchor="middle" font-size="12" fill="var(--muted)">build OK · 0 failed · ≥1 passed</text>
+        <line x1="710" y1="140" x2="710" y2="94" stroke="var(--ok)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+        <text x="20" y="400" font-size="13" fill="var(--muted)">Döngü şu durumlarda biter: finish kabul edilir · 3 iterasyon ilerleme olmaz (stagnation) · 25 iterasyon dolar.</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>Reflection ne zaman eklenir?</h3>
+  <p>Reflection yalnızca anlamlı geri bildirimden sonra eklenir; böylece gürültü ve maliyet düşer.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Araç çağrısı</th><th>Reflection</th></tr></thead>
+      <tbody>
+        <tr><td><code>run_tests</code></td><td><span class="tag ok">Her zaman</span></td></tr>
+        <tr><td><code>edit_file</code>, build hatası varsa</td><td><span class="tag ok">Evet</span></td></tr>
+        <tr><td><code>finish</code> reddedildiyse</td><td><span class="tag ok">Evet</span> (red metniyle)</td></tr>
+        <tr><td><code>view_file</code>, <code>search_file</code>, <code>write_file</code>, <code>execute_bash</code>, başarılı <code>edit_file</code></td><td><span class="tag no">Hayır</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Ne zaman durur?</h3>
+  <div class="grid three">
+    <div class="card"><h3><span class="tag ok">finish</span></h3><p>Ajan bitirmeyi önerir. TestForge testleri bir kez daha çalıştırır. Kabul için suite derlenmeli, hiç test kırmızı olmamalı ve en az bir test geçmeli. Aksi halde ret mesajı döner ve ajan devam eder; ret bir iterasyon tüketir.</p></div>
+    <div class="card"><h3><span class="tag bad">stagnation</span></h3><p>Son 3 iterasyonda (a) hiçbir dosya değişmemiş ve test sonuçları aynı kalmış ya da (b) ne test çalıştırılmış ne dosya değişmiş. Test eklenip coverage'ın sabit kalması stagnation sayılmaz.</p></div>
+    <div class="card"><h3><span class="tag no">max_iterations</span></h3><p>25 iterasyonluk bütçe doldu. Rapor yine yazılır; kısmi başarı da görünür.</p></div>
+  </div>
+</section>
+
+<section id="ornek">
+  <h2>Örnek: iterasyonlarla artan coverage</h2>
+  <p>Sunumdaki <code>DiscountService</code> örneği. Değerler mekanizmayı göstermek içindir. Önemli olan, ajanın her çalıştırmada aldığı bilgiyle suite'i büyütmesidir.</p>
+  <div class="card iter">
+    <div class="iter-row"><div class="label">1. iterasyon<small>Premium customer</small></div><div class="bar"><span style="width:65%">%65</span></div></div>
+    <div class="iter-row"><div class="label">2. iterasyon<small>Negative price → ArgumentException</small></div><div class="bar"><span style="width:82%">%82</span></div></div>
+    <div class="iter-row"><div class="label">3. iterasyon<small>Non-premium → no discount</small></div><div class="bar"><span class="full" style="width:100%">%100</span></div></div>
+  </div>
+  <p class="muted" style="margin-top:12px">Ajan coverage çıktısında kapsanmayan satırları görür (ör. <code>missing lines: 22-23, 29</code>). Sonra tam olarak o branch'lere giden testleri ekler.</p>
+</section>
+
+<section id="araclar">
+  <h2>Ajanın araçları</h2>
+  <p>Bunlar 5 ya da 7 farklı ajan değildir. Tek bir ajan, görevini tamamlamak için farklı araçları kullanır. Build, coverage ve mutation için ayrı bir araç <strong>yoktur</strong>.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Araç</th><th>Görevi</th><th>Kural</th></tr></thead>
+      <tbody>
+        <tr><td><code>view_file</code></td><td>Dosyayı satır numaralarıyla okur</td><td>En fazla 400 satırlık pencere</td></tr>
+        <tr><td><code>search_file</code></td><td>Dosya adı ve içerik araması yapar</td><td>Wildcard: <code>Discount*</code>, <code>*Tests.cs</code></td></tr>
+        <tr><td><code>write_file</code></td><td><strong>Yeni</strong> test dosyası oluşturur</td><td>Dosya varsa reddedilir; yalnızca test projesine yazar</td></tr>
+        <tr><td><code>edit_file</code></td><td>Mevcut test dosyasını değiştirir</td><td><code>replace</code> / <code>insert_after</code>; metin tam bir kez geçmeli. Ardından otomatik build yapılır</td></tr>
+        <tr><td><code>execute_bash</code></td><td>Salt-okunur keşif yapar</td><td>Yalnızca <code>ls</code>, <code>dir</code>, <code>cat</code>, <code>type</code>, <code>dotnet --info</code>, <code>dotnet --list-sdks</code>, <code>dotnet sln list</code></td></tr>
+        <tr><td><code>run_tests</code></td><td>Build, test ve coverage'ı tek çağrıda yapar</td><td>Test çalıştırmanın tek yolu; eksik satırların tamamını verir</td></tr>
+        <tr><td><code>finish</code></td><td>Bitirmeyi önerir</td><td>Doğrulanır: build OK, 0 failed, en az 1 passed</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="kurallar">
+  <h2>Kurallar ve nedenleri</h2>
+  <div class="grid two">
+    <div class="card"><h3>Kaynak kod salt okunurdur</h3><p>Ajan yalnızca test projesinin klasörüne yazabilir (WriteScope). Testi geçirmek için kaynağı değiştirmek en tehlikeli hatadır; bu araç seviyesinde engellenir.</p></div>
+    <div class="card"><h3>Testler yalnızca <code>run_tests</code> ile çalışır</h3><p><code>execute_bash</code> ile <code>dotnet test</code> çalıştırılsaydı coverage toplanmaz, çıktı da yapılandırılmamış olurdu. Bu yüzden reddedilir ve ajan <code>run_tests</code>'e yönlendirilir.</p></div>
+    <div class="card"><h3><code>write_file</code> dosya ezmez</h3><p>LLM'ler her seferinde dosyanın tamamını yeniden yazmaya eğilimlidir. Tek eşleşmeli <code>edit_file</code> değişiklikleri küçük ve izlenebilir tutar.</p></div>
+    <div class="card"><h3>Build otomatiktir</h3><p>Her başarılı <code>edit_file</code> sonrasında test projesi derlenir ve sonuç aynı çıktıya eklenir. Ajan ayrı bir build adımı için iterasyon harcamaz.</p></div>
+  </div>
+</section>
+
+<section id="kurulum">
+  <h2>Kurulum</h2>
+  <ol class="steps">
+    <li>
+      <strong>Gereksinimler.</strong> .NET 10 SDK, xUnit test projesi (<code>*.Tests.csproj</code>, <code>coverlet.collector</code> ile) ve tool calling destekleyen bir Azure OpenAI deployment'ı (ör. gpt-4o, gpt-4.1).
+    </li>
+    <li>
+      <strong>Derleyin ve testleri çalıştırın.</strong>
+      <pre><code>dotnet build TestForge.slnx
+dotnet test tests/TestForge.Tests</code></pre>
+    </li>
+    <li>
+      <strong>Azure ayarlarını verin.</strong> Öncelik sırası: ortam değişkeni, user-secrets, <code>./testforge.json</code>. Anahtarı repoya yazmayın.
+      <pre><code>$env:AZURE_OPENAI_ENDPOINT   = "https://&lt;kaynak-adi&gt;.openai.azure.com/"
+$env:AZURE_OPENAI_API_KEY    = "&lt;anahtar&gt;"
+$env:AZURE_OPENAI_DEPLOYMENT = "&lt;deployment-adi&gt;"</code></pre>
+      <p class="muted">Alternatif: <code>dotnet user-secrets --project src/TestForge.Cli set "AzureOpenAI:ApiKey" "&lt;anahtar&gt;"</code> (aynı şekilde <code>Endpoint</code> ve <code>Deployment</code>).</p>
+    </li>
+  </ol>
+</section>
+
+<section id="kullanim">
+  <h2>Kullanım</h2>
+  <pre><code>testforge generate --repo &lt;yol&gt; --file &lt;kaynak&gt; [--test-project &lt;csproj&gt;] [--max-iter 25]</code></pre>
+  <p>Repodaki örnek projeyle denemek için:</p>
+  <pre><code>dotnet run --project src/TestForge.Cli -- generate --repo samples --file DiscountCalculator/DiscountService.cs</code></pre>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Seçenek</th><th>Açıklama</th></tr></thead>
+      <tbody>
+        <tr><td><code>--repo</code></td><td>Repository kökü. Ajan yalnızca bunun altını okuyabilir.</td></tr>
+        <tr><td><code>--file</code></td><td>Test üretilecek kaynak dosya.</td></tr>
+        <tr><td><code>--test-project</code></td><td>Opsiyoneldir. Verilmezse <code>*.Tests.csproj</code> aranır. Tek aday varsa o kullanılır; birden fazlaysa <code>X.csproj → X.Tests.csproj</code> eşleşmesine bakılır. Bulunamazsa açık bir hata verilir.</td></tr>
+        <tr><td><code>--max-iter</code></td><td>İterasyon bütçesi (varsayılan 25).</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout info">Önerilen test dosyası (ör. <code>DiscountServiceTests.cs</code>) ve şablondaki <code>UnitTest1.cs</code> zaten varsa silinmez. Bu dosyalar <code>.testforge/backup/&lt;zaman&gt;/</code> altına taşınır. Diğer test dosyalarına dokunulmaz.</div>
+  <p>Çıkış kodları: <code>0</code> finish kabul edildi · <code>3</code> finish'e ulaşmadan durdu (rapor yine yazılır) · <code>2</code> kullanım veya ayar hatası.</p>
+</section>
+
+<section id="rapor">
+  <h2>Rapor</h2>
+  <p>Her koşu <code>&lt;repo&gt;/.testforge/report.json</code> ve <code>report.md</code> dosyalarını yazar. Rapordaki son değerler, ajan durduktan sonra yapılan <strong>son test koşusundan</strong> gelir.</p>
+  <pre><code>{
+  "outcome": { "stopReason": "finish", "finalPassed": 14, "finalFailed": 0, "finalCoveragePercent": 100.0, ... },
+  "iterations": [
+    { "index": 3, "passed": 6, "failed": 1, "coveragePercent": 65.0, "tokensUsedThisIteration": 3120,
+      "toolCalls": [ { "name": "edit_file", "path": "DiscountCalculator.Tests/DiscountServiceTests.cs" },
+                     { "name": "run_tests" } ],
+      "reflectionAdded": true }
+  ],
+  "usage": { "totalTokens": 48210 },
+  "mutation": null
+}</code></pre>
+  <p>Markdown raporunda bir özet tablosu, coverage gidişi (<code>%65 → %82 → %100</code>), iterasyon tablosu ve ajanın bitiş gerekçesi bulunur.</p>
+</section>
+
+<section id="sinirlar">
+  <h2>Sınırlar ve v2</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>v1 sınırları</h3>
+      <ul>
+        <li>Yalnızca C# / xUnit + coverlet desteklenir. Coverage satır bazlıdır.</li>
+        <li>Komutlar yerel makinede çalışır, Docker kullanılmaz. Güvenilmeyen kodu bu araçla test etmeyin.</li>
+        <li>Ajan kaynaktaki hatayı düzeltmez. Mevcut davranışı test eder ve gerekirse bunu bitiş gerekçesinde belirtir.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>v2 yol haritası</h3>
+      <ul>
+        <li><strong>Mutation testing (Stryker.NET).</strong> %100 coverage, %100 doğru test anlamına gelmez. Arayüz ve rapor alanı hazır.</li>
+        <li>Python (pytest + coverage.py) ve JS (vitest + c8) adapter'ları.</li>
+        <li>Docker sandbox ve klasör bazında toplu çalıştırma.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">Coverage yalnızca bir satırdan geçilip geçilmediğini söyler; assertion'ın doğru olduğunu garanti etmez. Mutation testing'de kod bilinçli olarak küçük şekillerde bozulur. Test bu değişikliği yakalıyorsa, testin gerçekten bir davranışı doğruladığına dair daha güçlü bir sinyal elde edilir.</div>
+</section>
+
+<footer>
+  TestForge v1 · Teknik referans: <a href="TestForge.md">docs/TestForge.md</a> · Yaklaşım: Jain &amp; Le Goues, arXiv:2503.14713
+</footer>
+
+</div>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    try { var saved = localStorage.getItem('testforge-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme') ||
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('testforge-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TestForge.Adapters.CSharp/TestForge.Adapters.CSharp.csproj" />
+    <Project Path="src/TestForge.Cli/TestForge.Cli.csproj" />
+    <Project Path="src/TestForge.Core/TestForge.Core.csproj" />
+    <Project Path="src/TestForge.Llm.Azure/TestForge.Llm.Azure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TestForge.Tests/TestForge.Tests.csproj" />
+  </Folder>
+</Solution>

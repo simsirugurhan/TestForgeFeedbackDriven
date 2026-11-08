@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestForge.Core\TestForge.Core.csproj" />
+    <ProjectReference Include="..\TestForge.Llm.Azure\TestForge.Llm.Azure.csproj" />
+    <ProjectReference Include="..\TestForge.Adapters.CSharp\TestForge.Adapters.CSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.14" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>testforge</AssemblyName>
+    <RootNamespace>TestForge.Cli</RootNamespace>
+    <UserSecretsId>testforge-cli</UserSecretsId>
+  </PropertyGroup>
+
+</Project>

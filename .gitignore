@@ -1,0 +1,12 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+TestResults/
+
+# TestForge run output (reports, backups of replaced test files)
+.testforge/
+
+# Local Azure settings — never commit the key
+testforge.json
